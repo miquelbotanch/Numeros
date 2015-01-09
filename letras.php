@@ -1,5 +1,30 @@
 <?php 
-
+/*
+// Numeros
+// =======
+// 
+// Conversiones de numeros PHP
+// 
+// Clase original de Felix de Jesus Carrillo Celerino (dcreate)
+// 	https://github.com/dcreate/Numeros/blob/master/letras.php
+// 
+// 
+// Modificada por Miquel Botanch
+// 
+// Cambios:
+// 
+//  	* He adaptado el código para que muestre dos decimales.
+// 
+//  	* Permite especificar nombres de moneda y de su centésima parte en singular y plural.
+// 
+//  	* Permite de manera opcional substituir un_mil por mil (como en el castellano de España)
+// 
+//  	* Adaptado para que sea directamente compatible con la versión original, por si se actualiza la clase,
+//  	  NO SEA NECESARIO corregir las llamadas a lHa función ValorEnLetras().  (ya que ahora tiene 5 parámetros en vez de 2)
+// 
+//  	* Añadida variable $anadir_MN_al_final para mostrar o esconder  (en España no se usa este acrónimo)
+//
+*/
 class EnLetras 
 { 
   var $Void = ""; 
@@ -7,14 +32,19 @@ class EnLetras
   var $Dot = "."; 
   var $Zero = "0"; 
   var $Neg = "Menos"; 
-   
-function ValorEnLetras($x, $Moneda )  
+  var $substituir_un_mil_por_mil = true;
+  var $anadir_MN_al_final = false;
+
+function ValorEnLetras($x, $Moneda_singular, $Moneda_plural="" ,$Centesima_parte_singular="", $Centesima_parte_plural="")  
 { 
     $s=""; 
     $Ent=""; 
     $Frc=""; 
     $Signo=""; 
-         
+    
+	// para compatibilizar la clase con la version antigua
+	$Moneda_plural = ($Moneda_plural == "") ? $Moneda_singular : $Moneda_plural;
+	
     if(floatVal($x) < 0) 
      $Signo = $this->Neg . " "; 
     else 
@@ -53,20 +83,45 @@ function ValorEnLetras($x, $Moneda )
     if (substr($s,-9, 9) == "Millones " || substr($s,-7, 7) == "Millón ") 
        $s = $s . "de "; 
 
-    $s = $s . $Moneda; 
 
-    if($Frc != $this->Void) 
-    { 
-       $s = $s . " " . $Frc. "/100"; 
-       //$s = $s . " " . $Frc . "/100"; 
-    } 
-    $letrass=$Signo . $s . " M.N."; 
-    return ($Signo . $s . " M.N."); 
+	if($this->substituir_un_mil_por_mil){
+		// En el castellano de España en vez de decir "Un Mil" se dice "Mil"
+		
+		if(substr($s,0,6)=="Un Mil"){
+			$s = substr($s,3);
+		}
+		
+	}
+	
+	// para compatibilizar la clase con la version antigua
+	if ( $Centesima_parte_singular == "" && 
+		 $Centesima_parte_plural == ""){
+		// ignora los decimales i los muestra como XX/100
+		
+//		$s = $s . $Moneda_singular; 
+		$s = $s . (intval(abs($x))==1 ? $Moneda_singular : $Moneda_plural); 
+
+	    if($Frc != $this->Void) 
+	    { 
+	       $s = $s . " " . $Frc. "/100"; 
+	       //$s = $s . " " . $Frc . "/100"; 
+	    } 
+
+	}else{	
+		$s = $s . (intval(abs($x))==1 ? $Moneda_singular : $Moneda_plural); 
+		
+		if($Frc != "00"){
+			$s.= " con ".$this->ValorEnLetras($Frc, $Centesima_parte_singular,$Centesima_parte_plural,"","");
+		}
+	}  
+
+    $letrass=$Signo . $s; 
+    return ($Signo . $s ); 
     
 } 
 
 
-function SubValLetra($numero)  
+function SubValLetra($numero)
 { 
     $Ptr=""; 
     $n=0; 
@@ -115,7 +170,7 @@ function SubValLetra($numero)
           $Tem = substr($Rtn, $Ptr + 5 ,1); 
           if( $Tem == "M" || $Tem == $this->Void) 
              ; 
-          else           
+          else
              $this->ReplaceStringFrom($Rtn, "Cien", "Ciento", $Ptr); 
        } 
     }while(!($Ptr === false)); 
@@ -152,14 +207,13 @@ function SubValLetra($numero)
     return($Rtn); 
 } 
 
-
-function ReplaceStringFrom(&$x, $OldWrd, $NewWrd, $Ptr) 
-{ 
+function ReplaceStringFrom(&$x, $OldWrd, $NewWrd, $Ptr)
+{
   $x = substr($x, 0, $Ptr)  . $NewWrd . substr($x, strlen($OldWrd) + $Ptr); 
 } 
 
 
-function Parte($x) 
+function Parte($x)
 { 
     $Rtn=''; 
     $t=''; 
@@ -227,8 +281,21 @@ function Parte($x)
 //-------------- Programa principal ------------------------ 
 
 
-$total=1234; 
- $V=new EnLetras(); 
- $con_letra=strtoupper($V->ValorEnLetras($total,"pesos"); 
- echo "<b>".$con."</b>";      
-?> 
+$total=1234.31; 
+$V=new EnLetras(); 
+$V->substituir_un_mil_por_mil = true;
+/*
+ $con_letra=strtoupper($V->ValorEnLetras($total,"Euros")); 
+ echo "<b>".$con_letra."</b>";      
+*/
+print $V->ValorEnLetras(1000,"Euro","Euros","Céntimo","Céntimos")."<br>";
+print $V->ValorEnLetras(12341234,"Euro","Euros","Céntimo","Céntimos")."<br>";
+print $V->ValorEnLetras(123412341234.33,"Euro","Euros","Céntimo","Céntimos")."<br>";
+print $V->ValorEnLetras(1234,"Euro","Euros","Céntimo","Céntimos")."<br>";
+print $V->ValorEnLetras(1234.01,"Euro","Euros","Céntimo","Céntimos")."<br>";
+print $V->ValorEnLetras(1234.11,"Euro","Euros","Céntimo","Céntimos")."<br>";
+print $V->ValorEnLetras(1234.21,"Dólar","Dólares","Centavo","Centavos")."<br>";
+print $V->ValorEnLetras(-1234.12,"Euro","Euros","Céntimo","Céntimos")."<br>";
+print $V->ValorEnLetras(-1234.12,"Euro")."<br>";
+
+?>
