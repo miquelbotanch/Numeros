@@ -22,7 +22,7 @@
 //  	* Adaptado para que sea directamente compatible con la versión original, por si se actualiza la clase,
 //  	  NO SEA NECESARIO corregir las llamadas a lHa función ValorEnLetras().  (ya que ahora tiene 5 parámetros en vez de 2)
 // 
-//  	* Añadida variable $anadir_MN_al_final para mostrar o esconder  (en España no se usa este acrónimo)
+//  	* Añadida variable $anadir_MN_al_final para añadir M.N. al final de la cadena (en España no se usa este acrónimo)
 //
 */
 class EnLetras 
@@ -33,7 +33,8 @@ class EnLetras
   var $Zero = "0"; 
   var $Neg = "Menos"; 
   var $substituir_un_mil_por_mil = true;
-  var $anadir_MN_al_final = false;
+  var $anadir_MN_al_final = true;
+  var $tratar_decimales = true;
 
 function ValorEnLetras($x, $Moneda_singular, $Moneda_plural="" ,$Centesima_parte_singular="", $Centesima_parte_plural="")  
 { 
@@ -94,14 +95,14 @@ function ValorEnLetras($x, $Moneda_singular, $Moneda_plural="" ,$Centesima_parte
 	}
 	
 	// para compatibilizar la clase con la version antigua
-	if ( $Centesima_parte_singular == "" && 
-		 $Centesima_parte_plural == ""){
+	if ( !$this->tratar_decimales ){
 		// ignora los decimales i los muestra como XX/100
 		
 //		$s = $s . $Moneda_singular; 
 		$s = $s . (intval(abs($x))==1 ? $Moneda_singular : $Moneda_plural); 
 
-	    if($Frc != $this->Void) 
+//	    if($Frc != $this->Void)
+		if($Frc != "00")
 	    { 
 	       $s = $s . " " . $Frc. "/100"; 
 	       //$s = $s . " " . $Frc . "/100"; 
@@ -111,12 +112,15 @@ function ValorEnLetras($x, $Moneda_singular, $Moneda_plural="" ,$Centesima_parte
 		$s = $s . (intval(abs($x))==1 ? $Moneda_singular : $Moneda_plural); 
 		
 		if($Frc != "00"){
-			$s.= " con ".$this->ValorEnLetras($Frc, $Centesima_parte_singular,$Centesima_parte_plural,"","");
+			$tmpV = new EnLetras();
+			$tmpV->anadir_MN_al_final = false;
+			$tmpV->tratar_decimales = false;
+			$s.= " con ".$tmpV->ValorEnLetras($Frc, $Centesima_parte_singular,$Centesima_parte_plural,"","");
 		}
 	}  
 
-    $letrass=$Signo . $s; 
-    return ($Signo . $s ); 
+//    $letrass=$Signo . $s;
+    return ($Signo . $s ).($this->anadir_MN_al_final?" M.N.":""); 
     
 } 
 
