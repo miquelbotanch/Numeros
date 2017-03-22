@@ -21,3 +21,15 @@ Cambios:
  	  NO SEA NECESARIO corregir las llamadas a lHa función ValorEnLetras().  (ya que ahora tiene 5 parámetros en vez de 2)
 
  	* Añadida variable $anadir_MN_al_final para mostrar o esconder  (en España no se usa este acrónimo)
+
+
+Modificada por Pedro Oliver
+
+Cambios:
+
+	* Añadida opción para activar o desactivar el uso de idiomas
+	* Añadido una opcion para definir el idioma actual
+	* Añadida opción para definir la ruta de idiomas
+	* Añado funcion llamada l para el uso de idiomas que solo funciona si esta activado el uso de idiomas
+	* Sustituidas todas las cadenas de texto con la funcion $this->l para incorporarlas al sistema de traducciones
+	* Movidas las opciones relacionadas con idiomas a los archivos de idiomas
