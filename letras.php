@@ -33,6 +33,7 @@
 //		* Añadido una opcion para definir el idioma actual
 //		* Añadida opción para definir la ruta de idiomas
 //		* Añado funcion llamada l para el uso de idiomas que solo funciona si esta activado el uso de idiomas
+//		* Sustituidas todas las cadenas de texto con la funcion $this->l para incorporarlas al sistema de traducciones
 */
 class EnLetras
 {
@@ -45,7 +46,7 @@ class EnLetras
   var $anadir_MN_al_final = true;
   var $tratar_decimales = true;
   var $activar_idiomas = true;
-  var $idioma = "es_ES";
+  var $idioma = "ca_ES";
   var $ruta_idiomas = "lang/";
 function __construct(){
 	// Comprovamos si esta actiado el sistema de idiomas si existe el DirectoryIterator
