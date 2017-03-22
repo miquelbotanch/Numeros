@@ -32,3 +32,4 @@ Cambios:
 	* Añadida opción para definir la ruta de idiomas
 	* Añado funcion llamada l para el uso de idiomas que solo funciona si esta activado el uso de idiomas
 	* Sustituidas todas las cadenas de texto con la funcion $this->l para incorporarlas al sistema de traducciones
+	* Movidas las opciones relacionadas con idiomas a los archivos de idiomas
