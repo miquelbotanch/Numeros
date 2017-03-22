@@ -89,25 +89,25 @@ function ValorEnLetras($x, $Moneda_singular, $Moneda_plural="" ,$Centesima_parte
     }
 
     if($Ent == $this->Zero || $Ent == $this->Void)
-       $s = "Cero ";
+       $s = $this->l("Cero")." ";
     elseif( strlen($Ent) > 7)
     {
        $s = $this->SubValLetra(intval( substr($Ent, 0,  strlen($Ent) - 6))) .
-             "Millones " . $this->SubValLetra(intval(substr($Ent,-6, 6)));
+            $this->l("Millones") ." ". $this->SubValLetra(intval(substr($Ent,-6, 6)));
     }
     else
     {
       $s = $this->SubValLetra(intval($Ent));
     }
 
-    if (substr($s,-9, 9) == "Millones " || substr($s,-7, 7) == "Millón ")
-       $s = $s . "de ";
+    if (substr($s,-9, 9) == $this->l("Millones")." " || substr($s,-7, 7) == $this->l("Millón")." ")
+       $s = $s . $this->l("de")." ";
 
 
 	if($this->substituir_un_mil_por_mil){
 		// En el castellano de España en vez de decir "Un Mil" se dice "Mil"
 
-		if(substr($s,0,6)=="Un Mil"){
+		if(substr($s,0,6)== $this->l("Un Mil")){
 			$s = substr($s,3);
 		}
 
@@ -134,7 +134,7 @@ function ValorEnLetras($x, $Moneda_singular, $Moneda_plural="" ,$Centesima_parte
 			$tmpV = new EnLetras();
 			$tmpV->anadir_MN_al_final = false;
 			$tmpV->tratar_decimales = false;
-			$s.= " con ".$tmpV->ValorEnLetras($Frc, $Centesima_parte_singular,$Centesima_parte_plural,"","");
+			$s.= " ".$this->l("con")." ".$tmpV->ValorEnLetras($Frc, $Centesima_parte_singular,$Centesima_parte_plural,"","");
 		}
 	}
 
@@ -163,21 +163,21 @@ function SubValLetra($numero)
     {
        $Tem = $this->Parte(intval(substr($x, $n - $i, 1).
                            str_repeat($this->Zero, $i - 1 )));
-       If( $Tem != "Cero" )
+       If( $Tem != $this->l("Cero") )
           $Rtn .= $Tem . $this->SP;
        $i = $i - 1;
     }
 
 
     //--------------------- GoSub FiltroMil ------------------------------
-    $Rtn=str_replace(" Mil Mil", " Un Mil", $Rtn );
+    $Rtn=str_replace(" ".$this->l("Mil")." ".$this->l("Mil"), " ".$this->l("Un Mil"), $Rtn );
     while(1)
     {
-       $Ptr = strpos($Rtn, "Mil ");
+       $Ptr = strpos($Rtn, $this->l("Mil")." ");
        If(!($Ptr===false))
        {
-          If(! (strpos($Rtn, "Mil ",$Ptr + 1) === false ))
-            $this->ReplaceStringFrom($Rtn, "Mil ", "", $Ptr);
+          If(! (strpos($Rtn, $this->l("Mil")." ",$Ptr + 1) === false ))
+            $this->ReplaceStringFrom($Rtn, $this->l("Mil")." ", "", $Ptr);
           Else
            break;
        }
@@ -187,44 +187,44 @@ function SubValLetra($numero)
     //--------------------- GoSub FiltroCiento ------------------------------
     $Ptr = -1;
     do{
-       $Ptr = strpos($Rtn, "Cien ", $Ptr+1);
+       $Ptr = strpos($Rtn, $this->l("Cien")." ", $Ptr+1);
        if(!($Ptr===false))
        {
           $Tem = substr($Rtn, $Ptr + 5 ,1);
           if( $Tem == "M" || $Tem == $this->Void)
              ;
           else
-             $this->ReplaceStringFrom($Rtn, "Cien", "Ciento", $Ptr);
+             $this->ReplaceStringFrom($Rtn, $this->l("Cien"), $this->l("Ciento"), $Ptr);
        }
     }while(!($Ptr === false));
 
     //--------------------- FiltroEspeciales ------------------------------
-    $Rtn=str_replace("Diez Un", "Once", $Rtn );
-    $Rtn=str_replace("Diez Dos", "Doce", $Rtn );
-    $Rtn=str_replace("Diez Tres", "Trece", $Rtn );
-    $Rtn=str_replace("Diez Cuatro", "Catorce", $Rtn );
-    $Rtn=str_replace("Diez Cinco", "Quince", $Rtn );
-    $Rtn=str_replace("Diez Seis", "Dieciseis", $Rtn );
-    $Rtn=str_replace("Diez Siete", "Diecisiete", $Rtn );
-    $Rtn=str_replace("Diez Ocho", "Dieciocho", $Rtn );
-    $Rtn=str_replace("Diez Nueve", "Diecinueve", $Rtn );
-    $Rtn=str_replace("Veinte Un", "Veintiun", $Rtn );
-    $Rtn=str_replace("Veinte Dos", "Veintidos", $Rtn );
-    $Rtn=str_replace("Veinte Tres", "Veintitres", $Rtn );
-    $Rtn=str_replace("Veinte Cuatro", "Veinticuatro", $Rtn );
-    $Rtn=str_replace("Veinte Cinco", "Veinticinco", $Rtn );
-    $Rtn=str_replace("Veinte Seis", "Veintiseís", $Rtn );
-    $Rtn=str_replace("Veinte Siete", "Veintisiete", $Rtn );
-    $Rtn=str_replace("Veinte Ocho", "Veintiocho", $Rtn );
-    $Rtn=str_replace("Veinte Nueve", "Veintinueve", $Rtn );
+    $Rtn=str_replace($this->l("Diez Un"), $this->l("Once"), $Rtn );
+    $Rtn=str_replace($this->l("Diez Dos"), $this->l("Doce"), $Rtn );
+    $Rtn=str_replace($this->l("Diez Tres"), $this->l("Trece"), $Rtn );
+    $Rtn=str_replace($this->l("Diez Cuatro"), $this->l("Catorce"), $Rtn );
+    $Rtn=str_replace($this->l("Diez Cinco"), $this->l("Quince"), $Rtn );
+    $Rtn=str_replace($this->l("Diez Seis"), $this->l("Dieciseis"), $Rtn );
+    $Rtn=str_replace($this->l("Diez Siete"), $this->l("Diecisiete"), $Rtn );
+    $Rtn=str_replace($this->l("Diez Ocho"), $this->l("Dieciocho"), $Rtn );
+    $Rtn=str_replace($this->l("Diez Nueve"), $this->l("Diecinueve"), $Rtn );
+    $Rtn=str_replace($this->l("Veinte Un"), $this->l("Veintiun"), $Rtn );
+    $Rtn=str_replace($this->l("Veinte Dos"), $this->l("Veintidos"), $Rtn );
+    $Rtn=str_replace($this->l("Veinte Tres"), $this->l("Veintitres"), $Rtn );
+    $Rtn=str_replace($this->l("Veinte Cuatro"), $this->l("Veinticuatro"), $Rtn );
+    $Rtn=str_replace($this->l("Veinte Cinco"), $this->l("Veinticinco"), $Rtn );
+    $Rtn=str_replace($this->l("Veinte Seis"), $this->l("Veintiseís"), $Rtn );
+    $Rtn=str_replace($this->l("Veinte Siete"), $this->l("Veintisiete"), $Rtn );
+    $Rtn=str_replace($this->l("Veinte Ocho"), $this->l("Veintiocho"), $Rtn );
+    $Rtn=str_replace($this->l("Veinte Nueve"), $this->l("Veintinueve"), $Rtn );
 
     //--------------------- FiltroUn ------------------------------
-    If(substr($Rtn,0,1) == "M") $Rtn = "Un " . $Rtn;
+    If(substr($Rtn,0,1) == "M") $Rtn = $this->l("Un")." " . $Rtn;
     //--------------------- Adicionar Y ------------------------------
     for($i=65; $i<=88; $i++)
     {
       If($i != 77)
-         $Rtn=str_replace("a " . Chr($i), "* y " . Chr($i), $Rtn);
+         $Rtn=str_replace("a " . Chr($i), "*".$this->l(" y ")."" . Chr($i), $Rtn);
     }
     $Rtn=str_replace("*", "a" , $Rtn);
     return($Rtn);
@@ -245,36 +245,36 @@ function Parte($x)
     {
       switch($x)
       {
-         Case 0:  $t = "Cero";break;
-         Case 1:  $t = "Un";break;
-         Case 2:  $t = "Dos";break;
-         Case 3:  $t = "Tres";break;
-         Case 4:  $t = "Cuatro";break;
-         Case 5:  $t = "Cinco";break;
-         Case 6:  $t = "Seis";break;
-         Case 7:  $t = "Siete";break;
-         Case 8:  $t = "Ocho";break;
-         Case 9:  $t = "Nueve";break;
-         Case 10: $t = "Diez";break;
-         Case 20: $t = "Veinte";break;
-         Case 30: $t = "Treinta";break;
-         Case 40: $t = "Cuarenta";break;
-         Case 50: $t = "Cincuenta";break;
-         Case 60: $t = "Sesenta";break;
-         Case 70: $t = "Setenta";break;
-         Case 80: $t = "Ochenta";break;
-         Case 90: $t = "Noventa";break;
-         Case 100: $t = "Cien";break;
-         Case 200: $t = "Doscientos";break;
-         Case 300: $t = "Trescientos";break;
-         Case 400: $t = "Cuatrocientos";break;
-         Case 500: $t = "Quinientos";break;
-         Case 600: $t = "Seiscientos";break;
-         Case 700: $t = "Setecientos";break;
-         Case 800: $t = "Ochocientos";break;
-         Case 900: $t = "Novecientos";break;
-         Case 1000: $t = "Mil";break;
-         Case 1000000: $t = "Millón";break;
+         Case 0:  $t = $this->l("Cero");break;
+         Case 1:  $t = $this->l("Un");break;
+         Case 2:  $t = $this->l("Dos");break;
+         Case 3:  $t = $this->l("Tres");break;
+         Case 4:  $t = $this->l("Cuatro");break;
+         Case 5:  $t = $this->l("Cinco");break;
+         Case 6:  $t = $this->l("Seis");break;
+         Case 7:  $t = $this->l("Siete");break;
+         Case 8:  $t = $this->l("Ocho");break;
+         Case 9:  $t = $this->l("Nueve");break;
+         Case 10: $t = $this->l("Diez");break;
+         Case 20: $t = $this->l("Veinte");break;
+         Case 30: $t = $this->l("Treinta");break;
+         Case 40: $t = $this->l("Cuarenta");break;
+         Case 50: $t = $this->l("Cincuenta");break;
+         Case 60: $t = $this->l("Sesenta");break;
+         Case 70: $t = $this->l("Setenta");break;
+         Case 80: $t = $this->l("Ochenta");break;
+         Case 90: $t = $this->l("Noventa");break;
+         Case 100: $t = $this->l("Cien");break;
+         Case 200: $t = $this->l("Doscientos");break;
+         Case 300: $t = $this->l("Trescientos");break;
+         Case 400: $t = $this->l("Cuatrocientos");break;
+         Case 500: $t = $this->l("Quinientos");break;
+         Case 600: $t = $this->l("Seiscientos");break;
+         Case 700: $t = $this->l("Setecientos");break;
+         Case 800: $t = $this->l("Ochocientos");break;
+         Case 900: $t = $this->l("Novecientos");break;
+         Case 1000: $t = $this->l("Mil");break;
+         Case 1000000: $t = $this->l("Millón");break;
       }
 
       If($t == $this->Void)
@@ -292,9 +292,9 @@ function Parte($x)
     Switch($i)
     {
        Case 0: $t = $this->Void;break;
-       Case 1: $t = " Mil";break;
-       Case 2: $t = " Millones";break;
-       Case 3: $t = " Billones";break;
+       Case 1: $t = " ".$this->l("Mil");break;
+       Case 2: $t = " ".$this->l("Millones");break;
+       Case 3: $t = " ".$this->l("Billones");break;
     }
     return($Rtn . $t);
 }
@@ -322,7 +322,7 @@ function l($cadena, $binds = array()){
 			chmod($this->ruta_idiomas.$this->idioma.".php", 0777);
 		}
 
-		include_once($this->ruta_idiomas.$this->idioma.".php");
+		require($this->ruta_idiomas.$this->idioma.".php");
 	    $cadena = str_replace("  ", " ", preg_replace('/\s+/', ' ', $cadena));
 	    if(!isset($lang[hash("md5", $cadena)])){
 	       	$fp = fopen($this->ruta_idiomas.$this->idioma.".php", "a");
@@ -370,6 +370,6 @@ print $V->ValorEnLetras(1234.11,"Euro","Euros","Céntimo","Céntimos")."<br>";
 print $V->ValorEnLetras(1234.21,"Dólar","Dólares","Centavo","Centavos")."<br>";
 print $V->ValorEnLetras(-1234.12,"Euro","Euros","Céntimo","Céntimos")."<br>";
 print $V->ValorEnLetras(-1234.12,"Euro")."<br>";
-print $V->l("Texto a traducir #valor#", array("#valor#" => 1000))."<br>";
+
 
 ?>
