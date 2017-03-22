@@ -34,6 +34,7 @@
 //		* Añadida opción para definir la ruta de idiomas
 //		* Añado funcion llamada l para el uso de idiomas que solo funciona si esta activado el uso de idiomas
 //		* Sustituidas todas las cadenas de texto con la funcion $this->l para incorporarlas al sistema de traducciones
+//		* Activar o desactivar
 */
 class EnLetras
 {
@@ -46,7 +47,7 @@ class EnLetras
   var $anadir_MN_al_final = true;
   var $tratar_decimales = true;
   var $activar_idiomas = true;
-  var $idioma = "ca_ES";
+  var $idioma = "es_ES";
   var $ruta_idiomas = "lang/";
 function __construct(){
 	// Comprovamos si esta actiado el sistema de idiomas si existe el DirectoryIterator
@@ -319,6 +320,11 @@ function l($cadena, $binds = array()){
 		if(!file_exists($this->ruta_idiomas.$this->idioma.".php")){
 			$fp = fopen($this->ruta_idiomas.$this->idioma.".php", "a+");
 			fwrite($fp, '<?php'. PHP_EOL);
+			fwrite($fp, PHP_EOL);
+			fwrite($fp, '$this->substituir_un_mil_por_mil = false;' . PHP_EOL);
+			fwrite($fp, '$this->anadir_MN_al_final = false;' . PHP_EOL);
+			fwrite($fp, '$this->tratar_decimales = true;' . PHP_EOL);
+			fwrite($fp, PHP_EOL);
 			fclose($fp);
 			chmod($this->ruta_idiomas.$this->idioma.".php", 0777);
 		}
@@ -356,7 +362,12 @@ function l($cadena, $binds = array()){
 
 $total=1234.31;
 $V=new EnLetras();
-$V->substituir_un_mil_por_mil = true;
+
+// Se ha introducido en el archivo de idiomas
+//$V->substituir_un_mil_por_mil = true;
+
+$V->activar_idiomas = true;
+
 /*
  $con_letra=strtoupper($V->ValorEnLetras($total,"Euros"));
  echo "<b>".$con_letra."</b>";
